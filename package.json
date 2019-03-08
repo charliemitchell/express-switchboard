@@ -1,0 +1,26 @@
+{
+  "name": "express-switchboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "mocha -w --require test/support/env --reporter spec --bail --check-leaks test/"
+  },
+  "keywords": [
+    "express",
+    "express switch board",
+    "switch",
+    "board"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.15.1",
+    "istanbul": "0.4.5",
+    "mocha": "5.2.0"
+  },
+  "dependencies": {
+    "rooty": "^2.0.0"
+  }
+}

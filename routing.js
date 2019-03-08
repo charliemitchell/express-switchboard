@@ -1,4 +1,3 @@
-require('rooty')();
 const fs = require('fs');
 const path = require('path');
 const filterJS = (file) => {
@@ -19,11 +18,11 @@ const find = (iterable, iteree) => {
 module.exports = function (app, routes, controllers) {
   // get all controllers
   let controllerPaths = fs.readdirSync(controllers).filter(filterJS).map((file) => {
-    return { name: file.split('/').slice(-1)[0], ref: require(`^${path.join(controllers, file)}`) }
+    return { name: file.split('/').slice(-1)[0], ref: require(`${path.join(process.cwd(), controllers, file)}`) }
   });
   // get all routes
   let routePaths = fs.readdirSync(routes).filter(filterJS).map((file) => {
-    return { name: file.split('/').slice(-1)[0], ref: require(`^${path.join(routes, file)}`) }
+    return { name: file.split('/').slice(-1)[0], ref: require(`${path.join(process.cwd(), routes, file)}`) }
   });
 
   // match them up

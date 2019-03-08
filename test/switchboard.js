@@ -1,12 +1,14 @@
 require('rooty')();
-var assert  = require('assert');
+var assert = require('assert');
 var switchboard = require('^index');
 
-describe('Express Switchboard', function () {
-  it('works', function () {
+describe('Express Switchboard', () => {
+  it('works', () => {
     let mockApp = getMockApp();
-    switchboard(mockApp, {routes: './test/mock/routes', controllers: './test/mock/controllers'});
-    let [ path, middleware ] = mockApp.registered.filter(x => x[0] === '/posts/:id')[0];
+    switchboard(mockApp, { routes: './test/mock/routes', controllers: './test/mock/controllers' });
+    let [ path, middleware ] = mockApp.registered.filter((x) => {
+      return x[0] === '/posts/:id'
+    })[0];
     assert.equal(path, '/posts/:id');
     assert.equal(middleware(), 'middleware');
   });

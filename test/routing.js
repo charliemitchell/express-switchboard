@@ -1,32 +1,33 @@
 require('rooty')();
-var assert  = require('assert');
+var assert = require('assert');
 var route = require('^routing');
 
-describe('Routing', function () {
-  
-  it('should execute app[method]', function () {
+describe('Routing', () => {
+  it('should execute app[method]', () => {
     let mockApp = getMockApp();
     route(mockApp, './test/mock/routes', './test/mock/controllers');
     assert.equal(mockApp.registered.length, 3)
   });
-
 });
 
-describe('Routing Errors', function () {
-
-  it('should error on a route/controller mismatch', function () {
+describe('Routing Errors', () => {
+  it('should error on a route/controller mismatch', () => {
     let mockApp = getMockApp();
-    assert.throws(function() { route(mockApp, './test/mock/routes', './test/mock/missing-controllers') }, Error);
+    assert.throws(() => {
+      route(mockApp, './test/mock/routes', './test/mock/missing-controllers')
+    }, Error);
   });
 
-  it('should have correct error message on a route/controller mismatch', function () {
+  it('should have correct error message on a route/controller mismatch', () => {
     let mockApp = getMockApp();
-    assert.throws(function() { route(mockApp, './test/mock/routes', './test/mock/missing-controllers') }, /No controller for your route "post.js" was found. Check that the route and the controller names match exactly/);
+    assert.throws(() => {
+      route(mockApp, './test/mock/routes', './test/mock/missing-controllers')
+    }, /No controller for your route "post.js" was found. Check that the route and the controller names match exactly/);
   });
 })
 
-describe('Routing - Express Arguments', function () {
-  it('should pass in the correct args to app', function () {
+describe('Routing - Express Arguments', () => {
+  it('should pass in the correct args to app', () => {
     let mockApp = getMockApp();
     route(mockApp, './test/mock/routes', './test/mock/controllers');
     let [ path, callback ] = mockApp.registered[0];
@@ -35,31 +36,35 @@ describe('Routing - Express Arguments', function () {
   });
 });
 
-describe('Routing - Controller Arguments', function () {
-  it('should pass in the correct args to the controller', function () {
+describe('Routing - Controller Arguments', () => {
+  it('should pass in the correct args to the controller', () => {
     let mockApp = getMockApp();
     route(mockApp, './test/mock/routes', './test/mock/controllers');
     let [ path, callback ] = mockApp.registered[0];
-    let instance = callback(1,2,3);
+    let instance = callback(1, 2, 3);
     assert.equal(instance.req, 1)
     assert.equal(instance.res, 2)
     assert.equal(instance.next, 3)
   });
 });
 
-describe('Routing - middleware', function () {
-  it('should pass in the middleware', function () {
+describe('Routing - middleware', () => {
+  it('should pass in the middleware', () => {
     let mockApp = getMockApp();
     route(mockApp, './test/mock/routes', './test/mock/controllers');
-    let [ path, middleware ] = mockApp.registered.filter(x => x[0] === '/posts/:id')[0];
+    let [ path, middleware ] = mockApp.registered.filter((x) => {
+      return x[0] === '/posts/:id'
+    })[0];
     assert.equal(path, '/posts/:id');
     assert.equal(middleware(), 'middleware');
   });
 
-  it('should pass in the middleware and controller should be last', function () {
+  it('should pass in the middleware and controller should be last', () => {
     let mockApp = getMockApp();
     route(mockApp, './test/mock/routes', './test/mock/controllers');
-    let [ path, middleware, callback ] = mockApp.registered.filter(x => x[0] === '/posts/:id')[0];
+    let [ path, middleware, callback ] = mockApp.registered.filter((x) => {
+      return x[0] === '/posts/:id'
+    })[0];
     assert.equal(path, '/posts/:id');
     assert.equal(middleware(), 'middleware');
     assert.equal(callback('req').req, 'req');

@@ -3,7 +3,7 @@ module.exports = {
     {
       path: '/posts',
       action: 'posts'
-    },{
+    }, {
       path: '/posts/:id',
       action: 'findPost',
       middleware: [

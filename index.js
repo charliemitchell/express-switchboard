@@ -1,4 +1,4 @@
-/* 
+/*
    example route
    {
      path: '/foo',

@@ -8,7 +8,7 @@ class PostsController {
   posts (req, res, next) {
     return this;
   }
-  
+
   findPost (req, res, next) {
     return this;
   }

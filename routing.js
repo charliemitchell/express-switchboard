@@ -34,18 +34,36 @@ module.exports = function (app, routes, controllers) {
       throw new Error(`No controller for your route "${router.name}" was found. Check that the route and the controller names match exactly`);
     }
     let methods = Object.keys(router.ref);
+    
     methods.forEach((method) => {
+      
       router.ref[method].forEach((route) => {
+        
+        let args = [ route.path ];
+        
         if (route.middleware) {
-          let args = [ route.path ].concat(route.middleware).concat((req, res, next) => {
-            return new Controller.ref(req, res, next)[route.action]();
-          });
-          app[method].apply(app, args);
-        } else {
-          app[method](route.path, (req, res, next) => {
-            return new Controller.ref(req, res, next)[route.action]();
-          });
+          args = args.concat(route.middleware)
         }
+        
+        args.push((req, res, next) => {
+          req._switchboard_controller = Controller.name;
+          req._switchboard_route = route;
+          if (route.plugins) {
+            return Promise.all(route.plugins.map(fn => new Promise(resolve => fn(req, res, resolve) )))
+              .then(function () {
+                return new Controller.ref(req, res, next)[route.action]();
+              })
+              .catch(err => {
+                console.error('An Error occured within an express switchboard plugin that was not caught by the plugin author', err);
+              });
+          } else {
+            return new Controller.ref(req, res, next)[route.action]();
+          }
+          
+        });
+
+        app[method].apply(app, args);
+
       });
     });
   })

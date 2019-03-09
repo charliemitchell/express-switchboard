@@ -6,7 +6,7 @@ describe('Routing', () => {
   it('should execute app[method]', () => {
     let mockApp = getMockApp();
     route(mockApp, './test/mock/routes', './test/mock/controllers');
-    assert.equal(mockApp.registered.length, 3)
+    assert.equal(mockApp.registered.length, 5)
   });
 });
 
@@ -69,6 +69,40 @@ describe('Routing - middleware', () => {
     assert.equal(middleware(), 'middleware');
     assert.equal(callback('req').req, 'req');
   });
+});
+
+describe('Routing - plugins', () => {
+  
+  it('should pass through the plugins', async () => {
+    let mockApp = getMockApp();
+    route(mockApp, './test/mock/routes', './test/mock/controllers');
+    let [ path, callback ] = mockApp.registered.filter((x) => {
+      return x[0] === '/post/success'
+    })[0];
+    let controller = await callback({},{});
+    assert.equal(controller.constructor.name, 'PostsController');
+  });
+
+  it('should set _switchboard_controller', async () => {
+    let mockApp = getMockApp();
+    route(mockApp, './test/mock/routes', './test/mock/controllers');
+    let [ path, callback ] = mockApp.registered.filter((x) => {
+      return x[0] === '/post/success'
+    })[0];
+    let controller = await callback({},{});
+    assert.equal(controller.constructor.name, 'PostsController');
+  });
+
+  it('should not pass through the plugins when reject is called', async () => {
+    let mockApp = getMockApp();
+    route(mockApp, './test/mock/routes', './test/mock/controllers');
+    let [ path, callback ] = mockApp.registered.filter((x) => {
+      return x[0] === '/post/error'
+    })[0];
+    let err = await callback({},{});
+    assert.equal(err, undefined);
+  });
+
 });
 
 function getMockApp () {

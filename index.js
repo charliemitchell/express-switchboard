@@ -3,6 +3,7 @@
    {
      path: '/foo',
      action: 'getFoo',
+     plugins: [ () => {}, () => {} ],
      middleware: [() => {}, () => {}]
    }
 */

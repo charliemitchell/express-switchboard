@@ -18,9 +18,7 @@
   "devDependencies": {
     "eslint": "^5.15.1",
     "istanbul": "0.4.5",
-    "mocha": "5.2.0"
-  },
-  "dependencies": {
+    "mocha": "5.2.0",
     "rooty": "^2.0.0"
   }
 }

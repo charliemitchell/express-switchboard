@@ -73,7 +73,7 @@ if (!onError) {
 
 ---
 
-Next we're creating a function that will recieve the request, response and resolve arguments from switchboard.
+Next we're creating a function that will recieve the request, response and resolve arguments from switchboard. (this is "the plugin" that switchboard accepts)
 
 ```js
 return function (req, res, resolve) {

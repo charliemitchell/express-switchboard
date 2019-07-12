@@ -1,13 +1,3 @@
-/*
-   example route
-   {
-     path: '/foo',
-     action: 'getFoo',
-     plugins: [ () => {}, () => {} ],
-     middleware: [() => {}, () => {}]
-   }
-*/
-
 const extendOptions = require('./options');
 const route = require('./routing');
 

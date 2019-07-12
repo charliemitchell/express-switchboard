@@ -1,24 +1,30 @@
 {
   "name": "express-switchboard",
   "version": "1.0.0",
-  "description": "",
+  "description": "Express Switchboard is a library for Express.js that adds organization to your express project through an advanced routing schema, controllers, middleware and plugins.",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "mocha -w --require test/support/env --reporter spec --bail --check-leaks test/"
+    "test": "mocha -w --require test/support/env --reporter spec --bail --check-leaks test/",
+    "cover": "istanbul cover _mocha test",
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
   },
   "keywords": [
     "express",
+    "routing",
+    "express router",
+    "express controllers",
     "express switch board",
     "switch",
     "board"
   ],
-  "author": "",
+  "author": "Charlie Mitchell",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^5.15.1",
     "istanbul": "0.4.5",
     "mocha": "5.2.0",
-    "rooty": "^2.0.0"
+    "rooty": "^2.0.0",
+    "coveralls": "^3.0.5"
   }
 }

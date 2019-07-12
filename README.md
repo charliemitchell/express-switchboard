@@ -1,15 +1,145 @@
-# WIP
-  
-  Coming soon... Ignore!.
+# Express Switchboard
 
-# Plugin Authoring
+| [SYNTAX](#use-cases) | [CONTROLLERS](#controllers) | [PLUGINS](#plugin-authoring) |
+| :---: | :---: | :---: |
+
+Express Switchboard is a library for Express.js that adds organization to your express project through an advanced routing schema, controllers, middleware and plugins.
+
+---
+
+Each endpoint in your application is divided based on a resource like user, post, etc.. (your models).
+
+```
+project
+│
+└───routes
+│   │   posts.js
+│   │   users.js
+│
+└───controllers
+|   │   posts.js
+|   │   users.js
+|
+|   ...
+```
+
+The 2 main concepts are routing and controllers. This library makes no assumptions regarding application code other than controllers should be classes. The routing is described via a route file. A route file is an object containing all of the routes available for that resource. An individual route consists of a path (url), the name of the controller action that will handle the request, and any middleware or plugins specific to that route. Examples of middleware would be a specific body parser, or file uploader (like multer), to session middleware or tracking. Plugins (See Plugin Authoring) are also a form of middleware that get get injected after all other midddleware.
+
+---
+**Example of how a route and controller are tied together**.
+If a GET request comes in for `/posts` then switchboard will receive the request, apply any applicable middleware or plugins, and route the request to the `posts` controller and invoke the `getAllPosts` method on the controller.
+
+```
+project
+│
+└───routes
+│   │   posts.js                                  ┌────────────────┐
+│   └──── { get: [{ path: '/posts', action: 'getAllPosts' }] }     |
+│                                                                  │
+└───controllers                                                    │
+|   │   posts.js                                                   │
+|   └───┐ class PostsController {                                  │
+|       |             ┌────────────────────────────────────────────┘
+|       |   async getAllPosts (req, res) {
+|       |     let posts = await Posts.all();
+|       |     res.json(posts);
+|       |   }
+|       |
+|       | }
+|
+```
+
+---
+
+**Example Route File**
+
+```js
+//routes/posts.js
+module.exports = {
+  get: [
+    {
+      path: '/posts',
+      action: 'getPosts'
+    },{
+      path: '/post/:id',
+      action: 'getPost'
+    }
+  ],
+  post: [
+    {
+      path: '/posts',
+      action: 'createPost'
+    }
+  ],
+  put: [
+    {
+      path: '/post/:id',
+      action: 'updatePost',
+      middleware: [ ensureCurrentUserIsPostOwner ]
+    }
+  ],
+  DELETE: [
+    {
+      path: '/post/:id',
+      action: 'deletePost',
+      middleware: [ ensureCurrentUserIsPostOwner ]
+    }
+  ]
+  /* etc... for all request methods supported by express */
+};
+```
+
+The object keys are the request methods, they are case insensitive. Each request method contains an array of routes for that method.
+
+Ex: All "Built in" options for a route object.
+```js
+
+{
+  path: '/posts',
+  action: 'getPosts',
+  middleware: [], // Any express middleware
+  plugins: [] // express-switchboard style plugins (see Plugin Authoring) or an example https://github.com/charliemitchell/express-switchboard-policies
+}
+
+```
+
+Plugins may request extending a route object with additional configuration if necessary.
+
+---
+
+## Controllers
+
+Controllers need to be classes.
+This library makes no assumptions on how your application code should be except that
+controllers should be classes, and they will receive the express `req`, `res` as their parameters.
+
+Example Controller:
+
+```
+class MyController {
+
+  someAction (request, response) {
+    // ... do stuff
+  }
+
+  // ... other actions
+
+}
+```
+
+middleware and plugins should strive to write to the request object if what they do is needed in the controller.
+
+
+---
+
+## Plugin Authoring
 
 There is one main difference between middleware and plugins. 
 
 - runs after all other middleware.
 - has access to the controller name and the route object
 
-##### Example Plugin.
+**Example Plugin**
 
 Below we'll create a plugin that adds `myField` to the request object.
 
@@ -23,7 +153,7 @@ module.exports = function () {
       }
       resolve();
     } catch (err) {
-      console.error("Something went wrong!");
+      console.error("Ahhh something went wrong! :(");
       resolve();
     }
   }
@@ -56,7 +186,7 @@ Break down.
 
 ---
 
-For this use case, it makes sense for your plugin to recieve function that we're assuming will do whatever is neccesary to determine if a request should have access to the controller. We'll also require that an error handler is provided in case of an error.
+For this use case, it makes sense for your plugin to receive function that we're assuming will do whatever is necessary to determine if a request should have access to the controller. We'll also require that an error handler is provided in case of an error.
 
 ```js
 module.exports = function (policyChecker, onError) {
@@ -73,7 +203,7 @@ if (!onError) {
 
 ---
 
-Next we're creating a function that will recieve the request, response and resolve arguments from switchboard. (this is "the plugin" that switchboard accepts)
+Next we're creating a function that will receive the request, response and resolve arguments from switchboard. (this is "the plugin" that switchboard accepts)
 
 ```js
 return function (req, res, resolve) {
@@ -113,8 +243,55 @@ catch (err) {
 }
 ```
 
+---
+
+## Use Cases
+
+**basic use case**
+```
+const express = require('express');
+const app = express();
+const expressSwitchboard = require('express-switchboard');
+
+expressSwitchboard(app);
+
+app.listen(3000, function () {
+  console.log('Server listening on port 3000');
+})
+```
+
+**basic use case with options.**
+```
+const express = require('express');
+const app = express();
+const expressSwitchboard = require('express-switchboard');
+
+expressSwitchboard(app, {
+  routes: './some-other-folder-for-routes',
+  controllers: './some-other-folder-for-controllers'
+});
+
+app.listen(3000, function () {
+  console.log('Server listening on port 3000');
+})
+```
+Options allow you to specify a different directory for your routes and/or controllers
 
 
+**using other libraries**
+```
+const express = require('express');
+const app = express();
+const helmet = require('helmet);
+const expressSwitchboard = require('express-switchboard');
 
+app.use(helmet);
+
+expressSwitchboard(app);
+
+app.listen(3000, function () {
+  console.log('Server listening on port 3000');
+})
+```
 
 

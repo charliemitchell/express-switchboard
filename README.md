@@ -53,6 +53,10 @@ project
 
 **Example Route File**
 
+- All routing is implemented using express. (this is a good thing)
+- The `get` object key maps to `app.get()` and the post maps to `app.post()`. Any HTTP method supported by express' router is also supported here.
+- The `path` key for a route object is sent directly to express' router (Eg. `app.get(route.path)`), all express routing sytntax is supported, and you are still using express.
+
 ```js
 //routes/posts.js
 module.exports = {
@@ -68,7 +72,9 @@ module.exports = {
   post: [
     {
       path: '/posts',
-      action: 'createPost'
+      action: 'createPost',
+      middleware: [ ensureUserCanCreatePosts, useCustomBodyParser ],
+      plugins: [ requestKeyTransformer({key: 'body', filters: [ 'sanitize', 'bad_words', 'deburr']) ]
     }
   ],
   put: [
@@ -90,6 +96,7 @@ module.exports = {
 ```
 
 The object keys are the request methods, they are case insensitive. Each request method contains an array of routes for that method.
+
 
 Ex: All "Built in" options for a route object.
 ```js

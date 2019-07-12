@@ -5,6 +5,8 @@
 
 Express Switchboard is a library for Express.js that adds organization to your express project through an advanced routing schema, controllers, middleware and plugins.
 
+[![Build Status](https://travis-ci.org/charliemitchell/express-switchboard.svg?branch=master)](https://travis-ci.org/charliemitchell/express-switchboard) [![Coverage Status](https://coveralls.io/repos/github/charliemitchell/express-switchboard/badge.svg?branch=master)](https://coveralls.io/github/charliemitchell/express-switchboard?branch=master)
+
 ---
 
 Each endpoint in your application is divided based on a resource like user, post, etc.. (your models).

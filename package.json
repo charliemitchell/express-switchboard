@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "mocha -w --require test/support/env --reporter spec --bail --check-leaks test/",
+    "test": "mocha --require test/support/env --reporter spec --bail --check-leaks --exit test/",
     "cover": "istanbul cover _mocha test",
     "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
   },

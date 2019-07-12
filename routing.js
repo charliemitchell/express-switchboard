@@ -3,17 +3,6 @@ const path = require('path');
 const filterJS = (file) => {
   return (/(\.js)$/).test(file)
 };
-const find = (iterable, iteree) => {
-  let i = 0;
-  let len = iterable.length;
-  for (i; i < len; i = i + 1) {
-    if (iteree(iterable[i])) {
-      let item = iterable[i];
-      iterable.splice(i, 1);
-      return item;
-    }
-  }
-}
 
 module.exports = function (app, routes, controllers) {
   // get all controllers
@@ -27,16 +16,14 @@ module.exports = function (app, routes, controllers) {
 
   // match them up
   routePaths.forEach((router) => {
-    let Controller = find(controllerPaths, (controller) => {
-      return router.name === controller.name
-    });
+    let Controller = controllerPaths.find(controller => router.name === controller.name);
     if (!Controller) {
       throw new Error(`No controller for your route "${router.name}" was found. Check that the route and the controller names match exactly`);
     }
     let methods = Object.keys(router.ref);
     
     methods.forEach((method) => {
-      
+
       router.ref[method].forEach((route) => {
         
         let args = [ route.path ];

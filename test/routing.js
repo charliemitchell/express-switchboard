@@ -6,7 +6,7 @@ describe('Routing', () => {
   it('should execute app[method]', () => {
     let mockApp = getMockApp();
     route(mockApp, './test/mock/routes', './test/mock/controllers');
-    assert.equal(mockApp.registered.length, 5)
+    assert.equal(mockApp.registered.length, 6)
   });
 });
 

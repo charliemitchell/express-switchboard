@@ -120,14 +120,14 @@ Plugins may request extending a route object with additional configuration if ne
 
 Controllers need to be classes.
 This library makes no assumptions on how your application code should be except that
-controllers should be classes, and they will receive the express `req`, `res` as their parameters.
+controllers should be classes, and they will receive the express `req`, `res`, `next` as their parameters.
 
 Example Controller:
 
 ```
 class MyController {
 
-  someAction (request, response) {
+  someAction (request, response, next) {
     // ... do stuff
   }
 
@@ -138,6 +138,7 @@ class MyController {
 
 middleware and plugins should strive to write to the request object if what they do is needed in the controller.
 
+The `next` parameter is there in case you have middleware after switchboard. In most cases you will never need invoke next() 
 
 ---
 

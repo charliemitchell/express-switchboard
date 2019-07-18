@@ -36,15 +36,15 @@ module.exports = function (app, routes, controllers) {
           req._switchboard_controller = Controller.name;
           req._switchboard_route = route;
           if (route.plugins) {
-            return Promise.all(route.plugins.map(fn => new Promise(resolve => fn(req, res, resolve) )))
+            Promise.all(route.plugins)
               .then(function () {
-                return new Controller.ref(req, res, next)[route.action]();
+                new Controller.ref(req, res, next)[route.action]();
               })
               .catch(err => {
                 console.error('An Error occured within an express switchboard plugin that was not caught by the plugin author', err);
               });
           } else {
-            return new Controller.ref(req, res, next)[route.action]();
+            new Controller.ref(req, res, next)[route.action]();
           }
           
         });

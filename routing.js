@@ -3,6 +3,7 @@ const path = require('path');
 const filterJS = (file) => {
   return (/(\.js)$/).test(file)
 };
+const development = process.env.NODE_ENV === 'development';
 
 module.exports = function (app, routes, controllers) {
   // get all controllers
@@ -33,24 +34,30 @@ module.exports = function (app, routes, controllers) {
         }
         
         args.push((req, res, next) => {
+          let i = 0;
           req._switchboard_controller = Controller.name;
           req._switchboard_route = route;
           if (route.plugins) {
-            Promise.all(route.plugins)
-              .then(function () {
-                new Controller.ref(req, res, next)[route.action]();
-              })
-              .catch(err => {
-                console.error('An Error occured within an express switchboard plugin that was not caught by the plugin author', err);
+            route.plugins.reduce((chain, plugin) => {
+              return chain.then(() => {
+                return plugin(req, res);
               });
+            }, Promise.resolve([])).then(() => {
+              new Controller.ref(req, res, next)[route.action]();
+            }).catch(err => {
+              if (development) {
+                next(err);
+              } else {
+                res.status(500).send();
+              }
+              console.error('An Error occured within an express switchboard plugin that was not caught by the plugin author', err);
+            });
           } else {
             new Controller.ref(req, res, next)[route.action]();
           }
           
         });
-
         app[method].apply(app, args);
-
       });
     });
   })

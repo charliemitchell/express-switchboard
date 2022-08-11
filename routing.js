@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const filterJS = (file) => {
-  return (/(\.js)$/).test(file)
-};
+const filterJS = file => (/(\.js)$/).test(file);
 const development = process.env.NODE_ENV === 'development';
 
 module.exports = function (app, routes, controllers) {
@@ -22,17 +20,17 @@ module.exports = function (app, routes, controllers) {
       throw new Error(`No controller for your route "${router.name}" was found. Check that the route and the controller names match exactly`);
     }
     let methods = Object.keys(router.ref);
-    
+
     methods.forEach((method) => {
 
       router.ref[method].forEach((route) => {
-        
+
         let args = [ route.path ];
-        
+
         if (route.middleware) {
           args = args.concat(route.middleware)
         }
-        
+
         args.push((req, res, next) => {
           let i = 0;
           req._switchboard_controller = Controller.name;
@@ -55,7 +53,7 @@ module.exports = function (app, routes, controllers) {
           } else {
             new Controller.ref(req, res, next)[route.action]();
           }
-          
+
         });
         app[method].apply(app, args);
       });
